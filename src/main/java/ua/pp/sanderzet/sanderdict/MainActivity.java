@@ -52,7 +52,7 @@ String query = "";
         if(savedInstanceState != null) {
 //           Restore saved necessary data after screen rotation
             query = savedInstanceState.getString("query");
-            searchView = (SearchView) getLastCustomNonConfigurationInstance();
+            searchView = (SearchView)  getLastCustomNonConfigurationInstance();
         }
         else {
             fragmentListSearch = FragmentListSearch.newInstance(query);
