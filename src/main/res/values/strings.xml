@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">SanderDict</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_search">Search</string>
+    <string name="hint">Search in Dictionary</string>
+    <string name="add_dictionary_from_dir">Add dictionary from dir</string>
+    <string name="add_dictionary_from_net">Add dictionary from net</string>
+    <string name="appwidget_text">SanderDict widget</string>
+    <string name="configure">Configure</string>
+    <string name="add_widget">Ok</string>
+    <string name="sanderdict">SanderDict</string>
+    <string name="text_in_widget">No dictionary installed</string>
+    <string name="autoupdate">Autoupdate</string>
+    <string name="update_period">Update period</string>
+</resources>
