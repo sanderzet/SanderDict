@@ -29,7 +29,7 @@ import static ua.pp.sanderzet.sanderdict.R.id.constraintLayout;
 public class MainActivity extends AppCompatActivity {
     FragmentListSearch fragmentListSearch;
     FragmentTransaction frTrans;
-    final String AUTHORITY  = "ua.pp.sanderzet.sanderdict.SanderDictProvider";
+    final String AUTHORITY = "ua.pp.sanderzet.sanderdict.SanderDictProvider";
     final String SCHEME = "content://";
 
     Uri uri = Uri.parse(SCHEME + AUTHORITY + "/dict");
