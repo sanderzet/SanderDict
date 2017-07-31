@@ -31,8 +31,7 @@ public class MainActivity extends AppCompatActivity {
     FragmentTransaction frTrans;
     final String AUTHORITY = "ua.pp.sanderzet.sanderdict.SanderDictProvider";
     final String SCHEME = "content://";
-    private static final String QUERY_EXTRA_KEY = "QUERY_EXTRA_KEY";
-    private static final String QUERY_URI = "QUERY_URI";
+
     Uri uri = Uri.parse(SCHEME + AUTHORITY + "/dict");
     SearchView searchView;
 String query = "";
