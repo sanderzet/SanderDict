@@ -47,7 +47,7 @@ String query = "";
 
 
 
-        FloatingActionButton fab_dict = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab_dict =  findViewById(R.id.fab);
         fab_dict.hide();
         if(savedInstanceState != null) {
 //           Restore saved necessary data after screen rotation
