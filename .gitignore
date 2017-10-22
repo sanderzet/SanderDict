@@ -52,4 +52,10 @@ google-services.json
 # Freeline
 freeline.py
 freeline/
-freeline_project_description.json 
+freeline_project_description.json
+Буде вилучено .gitignore
+Буде вилучено app.iml
+Буде вилучено build.gradle
+Буде вилучено libs/
+Буде вилучено proguard-rules.pro
+Буде вилучено src/
