@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="drawer_items">
+<item>@string/drawer_item_dictionaries</item>
+        <item>@string/drawer_item_favorite</item>
+        <item>@string/drawer_item_settings</item>
+        <item>@string/drawer_item_about</item>
+    </array>
+</resources>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SanderDict</string>
+    <string name="action_search">Пошук</string>
+    <string name="action_settings">Налаштування</string>
+    <string name="add_dictionary_from_dir">Додати словник з пристрою</string>
+    <string name="add_dictionary_from_net">Доодати словник з мережі</string>
+    <string name="hint">Пошук в словнику</string>
+    <string name="sanderdict">SanderDict</string>
+    <string name="text_in_widget">Словник не встановлено</string>
+    <string name="appwidget_text">SanderDict віджет</string>
+    <string name="add_widget">Ok</string>
+    <string name="configure">Налаштування</string>
+    <string name="autoupdate">Автооновлення</string>
+    <string name="update_period">Період оновлення</string>
+    <string name="drawer_item_dictionaries">Словник</string>
+    <string name="drawer_item_favorite">Вибрані</string>
+    <string name="drawer_item_settings">Налаштування</string>
+    <string name="drawer_item_about">Інформація</string>
+    <string name="navigation_drawer_open">Відкрити меню</string>
+    <string name="navigation_drawer_close">Закрити меню</string>
+</resources>
