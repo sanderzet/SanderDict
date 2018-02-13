@@ -1,5 +1,7 @@
 package ua.pp.sanderzet.sanderdict.view.ui;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.SearchManager;
 import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.LifecycleRegistryOwner;
@@ -13,10 +15,10 @@ import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -33,14 +35,13 @@ import ua.pp.sanderzet.sanderdict.R;
 import static android.support.design.widget.Snackbar.LENGTH_INDEFINITE;
 
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LifecycleRegistryOwner {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
 
 private String LOG_TAG;
 
 LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
     FragmentListSearch fragmentListSearch;
-    FragmentTransaction frTrans;
 
        SearchView searchView;
 String query = "";
@@ -49,6 +50,9 @@ String query = "";
 private DrawerLayout mDrawerLayout;
 private NavigationView mNavigationView;
 private ConstraintLayout constraintLayout;
+private FragmentManager fragmentManager;
+private FragmentTransaction fragmentTransaction;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,12 +68,11 @@ mNavigationView = findViewById(R.id.nav_view);
 mDrawerLayout.addDrawerListener(actionBarDrawerToggle);
 actionBarDrawerToggle.syncState();
 mNavigationView.setNavigationItemSelectedListener(this);
-
-
+FragmentManager fragmentManager = getFragmentManager();
 
         viewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
 
-
+//        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
 
         if(savedInstanceState != null) {
@@ -80,9 +83,11 @@ mNavigationView.setNavigationItemSelectedListener(this);
 
         else {
             fragmentListSearch =  FragmentListSearch.newInstance(query);
-            frTrans = getSupportFragmentManager().beginTransaction();
-            frTrans.add(R.id.frameLayout, fragmentListSearch);
-            frTrans.commit();
+
+            fragmentTransaction = fragmentManager.beginTransaction();
+//                    b FragmentManager().beginTransaction();
+            fragmentTransaction.add(R.id.frameLayout, fragmentListSearch);
+            fragmentTransaction.commit();
             // sp = PreferenceManager.getDefaultSharedPreferences(this);
             // sp.edit().putString("dict_now", "").apply();
         }

@@ -1,9 +1,11 @@
 package ua.pp.sanderzet.sanderdict.viewmodel;
 
 import android.app.Application;
+import android.arch.core.util.Function;
 import android.arch.lifecycle.AndroidViewModel;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.Transformations;
 
 import java.util.Calendar;
 
@@ -17,21 +19,26 @@ import ua.pp.sanderzet.sanderdict.data.repository.Repository;
 public class ListSearchViewModel extends AndroidViewModel {
 
 private final Repository repository;
-    private final MutableLiveData<Boolean>  wordNotInFavorite = new MutableLiveData<>();
+
+    private final MutableLiveData<FavoriteModel> favoriteModelMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<String > newWord = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> wordIsFavorite;
 
     public ListSearchViewModel(Application application) {
         super(application);
         repository = Repository.getInstance(application);
-
+        wordIsFavorite = (MutableLiveData<Boolean>)Transformations.switchMap(newWord, input -> repository.isWordFavorite(input)
+        );
     }
 
-    public final MutableLiveData getWordNotInFavorite () {
-        return wordNotInFavorite;
+    public final MutableLiveData getWordIsFavorite() {
+        return wordIsFavorite;
     }
 
 
-    public void searchIsDone(FavoriteModel favoriteModel) {
-        repository.getWord(favoriteModel);
+    public void searchIsDone(String word, String definition)
+    {
+        newWord.setValue(word);
     }
 
     public void addWordToFavorite (String word, String definition) {
@@ -39,7 +46,7 @@ private final Repository repository;
         repository.addWord(createFavoriteModel(word, definition));
 
         //        Word has added, so fab in UI must be invisible
-        wordNotInFavorite.setValue(false);
+        wordIsFavorite.setValue(false);
     }
 
     private FavoriteModel createFavoriteModel (String word, String definition) {
