@@ -1,43 +1,40 @@
 package ua.pp.sanderzet.sanderdict.view.ui;
 
-import android.app.Fragment;
-import android.app.LoaderManager;
-import android.app.SearchManager;
+import android.app.Activity;
+import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.CursorLoader;
-import android.content.Intent;
-import android.content.Loader;
-import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
 
-import ua.pp.sanderzet.sanderdict.data.DBSanderDict;
+import java.util.List;
+
+import ua.pp.sanderzet.sanderdict.data.model.DictionaryModel;
 import ua.pp.sanderzet.sanderdict.view.adapter.SearchListAdapter;
 import ua.pp.sanderzet.sanderdict.viewmodel.ListSearchViewModel;
 import ua.pp.sanderzet.sanderdict.R;
 import ua.pp.sanderzet.sanderdict.SanderDictConstants;
+import ua.pp.sanderzet.sanderdict.viewmodel.MainActivityViewModel;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 
-public class FragmentListSearch extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class FragmentListSearch extends Fragment {
 
 
     private static final String QUERY_EXTRA_KEY = "QUERY_EXTRA_KEY";
@@ -48,12 +45,21 @@ private String word;
 private String definition;
 private View rootView;
 private ListView listView;
+
+
 private RecyclerView recyclerView;
-private RecyclerView.Adapter rvAdapter;
+private SearchListAdapter rvAdapter;
+
     SimpleCursorAdapter scAdapter;
-    private ListSearchViewModel viewModel ;
+    private ListSearchViewModel listSearchViewModel;
+    private MainActivityViewModel mainActivityViewModel;
+
+
+
+
     private FloatingActionButton addWordToFavoriteFloatingActionButton;
 private ImageButton ib_Favorite;
+/*
 public static FragmentListSearch newInstance  (String query){
     FragmentListSearch fragmentListSearch = new FragmentListSearch();
 Bundle args = new Bundle();
@@ -61,6 +67,7 @@ Bundle args = new Bundle();
      fragmentListSearch.setArguments(args);
     return fragmentListSearch;
 }
+*/
 
 
 
@@ -68,8 +75,8 @@ Bundle args = new Bundle();
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
        rootView = inflater.inflate(R.layout.frag_list_search, container, false);
-       addWordToFavoriteFloatingActionButton = rootView.findViewById(R.id.fab);
-       listView = rootView.findViewById(R.id.listView);
+              addWordToFavoriteFloatingActionButton = rootView.findViewById(R.id.fab);
+//       listView = rootView.findViewById(R.id.listView);
 ib_Favorite = rootView.findViewById(R.id.ib_Favorite);
        return rootView;
 
@@ -81,38 +88,53 @@ ib_Favorite = rootView.findViewById(R.id.ib_Favorite);
 
         LOG_TAG = SanderDictConstants.getLogTag();
         CONTENT_URI = SanderDictConstants.getContentUri();
-        viewModel = ViewModelProviders.of((FragmentActivity)getActivity()).get(ListSearchViewModel.class);
-        viewModel.getWordIsFavorite().observe((FragmentActivity)getActivity(), new Observer<Boolean>() {
-            @Override
-            public void onChanged(@Nullable Boolean o) {
-                if (o) {
-//                    addWordToFavoriteFloatingActionButton.setImageResource(R.drawable.ic_remove_24dp);
-                    ib_Favorite.setImageResource(R.drawable.ic_star_24dp);
-                }
-                else {
-//                    addWordToFavoriteFloatingActionButton.setImageResource(R.drawable.ic_add_24dp);
-                    ib_Favorite.setImageResource(R.drawable.ic_star_border_24dp);
-                }
-            }
-        });
-addWordToFavoriteFloatingActionButton.setOnClickListener(new View.OnClickListener() {
-
-    @Override
-    public void onClick(View view) {
-
-//ToDo        Temporary it is so, then it`ll move from CursorLoader and will be used LiveDate
- viewModel.addWordToFavorite(word,definition);
-    }
-});
-
+        FragmentActivity myActivity = getActivity();
 
 // RecyclerView adapter
 
         recyclerView = rootView.findViewById(R.id.rv_search);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvAdapter = new SearchListAdapter();
-        recyclerView.setAdapter(rvAdapter);
 
+        listSearchViewModel = ViewModelProviders.of(myActivity).get(ListSearchViewModel.class);
+        mainActivityViewModel = ViewModelProviders.of(myActivity).get(MainActivityViewModel.class);
+        mainActivityViewModel.getListSuggestedWord().observe(myActivity, new Observer<List<DictionaryModel>>() {
+            @Override
+            public void onChanged(@Nullable List<DictionaryModel> dictionaryModels) {
+                if (recyclerView.getAdapter() == null) {
+                    rvAdapter = new SearchListAdapter(dictionaryModels, mainActivityViewModel);
+                    recyclerView.setAdapter(rvAdapter);
+                } else {
+                    rvAdapter.updateList(dictionaryModels);
+
+                }
+
+            }
+        });
+
+
+        listSearchViewModel.getWordIsFavorite().observe(myActivity, new Observer<Boolean>() {
+            @Override
+            public void onChanged(@NonNull Boolean o) {
+                if (o) {
+//                    addWordToFavoriteFloatingActionButton.setImageResource(R.drawable.ic_remove_24dp);
+                    ib_Favorite.setImageResource(R.drawable.ic_star_24dp);
+                } else {
+//                    addWordToFavoriteFloatingActionButton.setImageResource(R.drawable.ic_add_24dp);
+                    ib_Favorite.setImageResource(R.drawable.ic_star_border_24dp);
+                }
+            }
+        });
+        addWordToFavoriteFloatingActionButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+
+                listSearchViewModel.addWordToFavorite(word, definition);
+            }
+        });
+
+
+    }
 
 
      /*   // Створюємо адаптер і настроюємо список
@@ -138,6 +160,7 @@ addWordToFavoriteFloatingActionButton.setOnClickListener(new View.OnClickListene
 listView.setAdapter(scAdapter);*/
 // Створюємо курсор-лоадер
 
+/*
                 getLoaderManager().initLoader(0,null,  this);
 
     }
@@ -198,7 +221,7 @@ Intent intent = getActivity().getIntent();
             definition = data.getString(data.getColumnIndex(DBSanderDict.KEY_DETAILS));
             if (!word.isEmpty() && !definition.isEmpty())
                 try {
-                    viewModel.searchIsDone(word, definition);            //            Snackbar.make(rootView, word + " /n" + definition, Snackbar.LENGTH_LONG).show();
+                    listSearchViewModel.searchIsDone(word, definition);            //            Snackbar.make(rootView, word + " /n" + definition, Snackbar.LENGTH_LONG).show();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -217,10 +240,12 @@ scAdapter.swapCursor(null);
 getLoaderManager().destroyLoader(0);
     }
 
-
-   /* @Override
-    public LifecycleRegistry getLifecycle() {
-        return lifecycleRegistry;
-    }*/
+*/
+//
+//    @Override
+//    public LifecycleRegistry getLifecycle() {
+//        return lifecycleRegistry;
+//    }
 }
+
 
