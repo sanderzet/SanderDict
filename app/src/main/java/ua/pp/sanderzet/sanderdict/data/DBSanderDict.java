@@ -29,7 +29,7 @@ import java.util.zip.GZIPInputStream;
  * for github
  */
 public class DBSanderDict {
-    private static final String db_table = "dict" ;
+    private static final String db_table = "databases";
     private static final int DB_VERSION = 1;
     //Column Names for table
     private static final String KEY_ID = BaseColumns._ID;
@@ -156,7 +156,7 @@ public Cursor query(String[] projection, String selection){
         boolean nextWord = false ;
         try {
             AssetManager am = mCtx.getAssets();
-            gz = new GZIPInputStream(am.open("dict/univer_en_uk.dsl.dz"));
+            gz = new GZIPInputStream(am.open("databases/univer_en_uk.dsl.dz"));
             decoder = new InputStreamReader(gz, "UTF-16LE");
             br = new BufferedReader(decoder);
 

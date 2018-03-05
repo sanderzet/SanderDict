@@ -17,4 +17,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+    <ImageButton
+        android:id="@+id/ib_Favorite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/favorite"
+        app:layout_constraintBottom_toBottomOf="@+id/favoriteItemWord"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/favoriteItemWord"
+        app:srcCompat="@drawable/ic_star_border_24dp" />
+
 </android.support.constraint.ConstraintLayout>

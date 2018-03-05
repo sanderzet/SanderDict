@@ -21,6 +21,7 @@ allprojects {
         google()
         jcenter()
         maven { url 'https://maven.google.com' }
+        maven { url "https://jitpack.io"}
 
     }
 }
@@ -30,8 +31,9 @@ repositories {
     mavenCentral()
 }
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }
+
 compileKotlin {
     kotlinOptions {
         jvmTarget = "1.8"

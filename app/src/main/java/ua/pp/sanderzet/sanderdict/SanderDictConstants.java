@@ -10,7 +10,7 @@ public final  class SanderDictConstants {
     private static final String LOG_TAG = "SanderLog";
     private static final String AUTHORITY = "ua.pp.sanderzet.sanderdict.data.SanderDictProvider";
     private static final String SCHEME = "content://";
-    private static final Uri CONTENT_URI = Uri.parse(SCHEME+AUTHORITY+"/dict");
+    private static final Uri CONTENT_URI = Uri.parse(SCHEME+AUTHORITY+ "/databases");
 
     public static String getLogTag() {
         return LOG_TAG;

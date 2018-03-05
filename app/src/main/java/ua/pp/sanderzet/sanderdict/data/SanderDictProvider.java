@@ -47,8 +47,8 @@ public class SanderDictProvider extends ContentProvider {
     static
     {
         AUTHORITY = SanderDictConstants.getAUTHORITY();
-        sUriMatcher.addURI(AUTHORITY, "dict", SEARCH_WORDS);
-        sUriMatcher.addURI(AUTHORITY, "dict/#", GET_WORD);
+        sUriMatcher.addURI(AUTHORITY, "databases", SEARCH_WORDS);
+        sUriMatcher.addURI(AUTHORITY, "databases/#", GET_WORD);
         sUriMatcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_QUERY, SEARCH_SUGGEST);
         sUriMatcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_QUERY + "/*", SEARCH_SUGGEST);
         sUriMatcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_SHORTCUT, SEARCH_SUGGEST);
@@ -79,7 +79,7 @@ boolean b = true;
 //            If it`s first launch or preferences destroyed - repair it.
             db_def = sp.getString("db_def", null);
             if (db_def == null) {
-                String[] defDb = mCtx.getAssets().list("dict");
+                String[] defDb = mCtx.getAssets().list("databases");
                 sp.edit().putString("db_def", defDb[0]).apply();
                 db_def = defDb[0];
 //                Also will declare path to db
@@ -102,7 +102,7 @@ boolean b = true;
                 }
                 else {
 //                    If even def dict don`t exist, copy from Assets
-                   if (!(b = mDict.copyDefDictFromAssets("dict/" + db_def, db_path + db_def)))
+                   if (!(b = mDict.copyDefDictFromAssets("databases/" + db_def, db_path + db_def)))
                     Log.d(LOG_TAG, "Error while copying db from Assets");
                 }
                 sp.edit().putString("db_name", db_def).apply();
@@ -141,7 +141,6 @@ boolean b = true;
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        // TODO: Implement this to handle requests to insert a new row.
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
@@ -208,7 +207,6 @@ boolean b = true;
     @Override
     public int update(Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
-        // TODO: Implement this to handle requests to update one or more rows.
         throw new UnsupportedOperationException("Not yet implemented");
     }
 

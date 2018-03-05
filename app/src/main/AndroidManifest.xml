@@ -34,13 +34,7 @@
                 android:resource="@xml/searchable" />
         </activity>
 
-        <provider
-            android:name=".data.SanderDictProvider"
-            android:authorities="ua.pp.sanderzet.sanderdict.data.SanderDictProvider"
-            android:enabled="true"
-            android:exported="false" />
-
-        <receiver android:name=".widget.SanderDictWidget"
+                <receiver android:name=".widget.SanderDictWidget"
             android:label="@string/appwidget_text"
             android:icon="@mipmap/ic_launcher">
             <intent-filter>
