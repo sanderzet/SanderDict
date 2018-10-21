@@ -13,16 +13,25 @@ import ua.pp.sanderzet.sanderdict.data.util.DateConverter;
  * Created by sander on 27/08/17.
  */
 
-@Entity
+@Entity (tableName = "fdict")
 public class FavoriteModel {
     @PrimaryKey(autoGenerate = true)
-    public int id;
+    private int id;
 
-    public String word;
-    public String definition;
-@TypeConverters(DateConverter.class)
-    public Date dateOfStoring;
-    public Integer stars;
+    private String word;
+    private String definition;
+
+//@TypeConverters(DateConverter.class)
+    private Date dateOfStoring;
+    private Integer stars;
+
+    public FavoriteModel(int id, String word, String definition, Date dateOfStoring, Integer stars) {
+        this.id = id;
+        this.word = word;
+        this.definition = definition;
+        this.dateOfStoring = dateOfStoring;
+        this.stars = stars;
+    }
 
     public int getId() {
         return id;

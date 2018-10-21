@@ -1,8 +1,10 @@
 package ua.pp.sanderzet.sanderdict.data.repository;
 
 import android.app.Application;
+import android.arch.core.util.Function;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Transformations;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -46,7 +48,7 @@ public class DictionaryRepository {
     return mDictionaryRepository;
     }
 
-    public  LiveData<List<DictionaryModel>> getSuggestedWord (String query) {
+    public  LiveData<List<DictionaryModel>> getSuggestedWords(String query) {
         String pattern = (query.isEmpty())? query : query+"%";
         return dictionaryDAO.getSuggestedDictionaryItems(pattern);
     }

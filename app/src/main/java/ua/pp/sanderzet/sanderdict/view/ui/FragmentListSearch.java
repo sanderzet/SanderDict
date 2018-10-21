@@ -1,9 +1,6 @@
 package ua.pp.sanderzet.sanderdict.view.ui;
 
-import android.app.Activity;
-import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProviders;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,13 +16,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 
 import java.util.List;
 
 import ua.pp.sanderzet.sanderdict.data.model.DictionaryModel;
 import ua.pp.sanderzet.sanderdict.view.adapter.SearchListAdapter;
-import ua.pp.sanderzet.sanderdict.viewmodel.ListSearchViewModel;
+import ua.pp.sanderzet.sanderdict.viewmodel.FavoriteListViewModel;
 import ua.pp.sanderzet.sanderdict.R;
 import ua.pp.sanderzet.sanderdict.SanderDictConstants;
 import ua.pp.sanderzet.sanderdict.viewmodel.MainActivityViewModel;
@@ -50,8 +46,7 @@ private ListView listView;
 private RecyclerView recyclerView;
 private SearchListAdapter rvAdapter;
 
-    SimpleCursorAdapter scAdapter;
-    private ListSearchViewModel listSearchViewModel;
+    private FavoriteListViewModel favoriteListViewModel;
     private MainActivityViewModel mainActivityViewModel;
 
 
@@ -70,14 +65,19 @@ Bundle args = new Bundle();
 */
 
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
        rootView = inflater.inflate(R.layout.frag_list_search, container, false);
-              addWordToFavoriteFloatingActionButton = rootView.findViewById(R.id.fab);
+//              addWordToFavoriteFloatingActionButton = rootView.findViewById(R.id.fab);
 //       listView = rootView.findViewById(R.id.listView);
-ib_Favorite = rootView.findViewById(R.id.ib_Favorite);
+//ib_Favorite = rootView.findViewById(R.id.ib_Favorite);
        return rootView;
 
    }
@@ -89,20 +89,18 @@ ib_Favorite = rootView.findViewById(R.id.ib_Favorite);
         LOG_TAG = SanderDictConstants.getLogTag();
         CONTENT_URI = SanderDictConstants.getContentUri();
         FragmentActivity myActivity = getActivity();
-
-// RecyclerView adapter
-
         recyclerView = rootView.findViewById(R.id.rv_search);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        listSearchViewModel = ViewModelProviders.of(myActivity).get(ListSearchViewModel.class);
+        favoriteListViewModel = ViewModelProviders.of(myActivity).get(FavoriteListViewModel.class);
         mainActivityViewModel = ViewModelProviders.of(myActivity).get(MainActivityViewModel.class);
-        mainActivityViewModel.getListSuggestedWord().observe(myActivity, new Observer<List<DictionaryModel>>() {
+        mainActivityViewModel.getListSuggestedWords().observe(myActivity, new Observer<List<DictionaryModel>>() {
             @Override
             public void onChanged(@Nullable List<DictionaryModel> dictionaryModels) {
-                if (recyclerView.getAdapter() == null) {
+                if  (recyclerView.getAdapter() == null){
                     rvAdapter = new SearchListAdapter(dictionaryModels, mainActivityViewModel);
                     recyclerView.setAdapter(rvAdapter);
+                    recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
                 } else {
                     rvAdapter.updateList(dictionaryModels);
 
@@ -112,26 +110,7 @@ ib_Favorite = rootView.findViewById(R.id.ib_Favorite);
         });
 
 
-        listSearchViewModel.getWordIsFavorite().observe(myActivity, new Observer<Boolean>() {
-            @Override
-            public void onChanged(@NonNull Boolean o) {
-                if (o) {
-//                    addWordToFavoriteFloatingActionButton.setImageResource(R.drawable.ic_remove_24dp);
-                    ib_Favorite.setImageResource(R.drawable.ic_star_24dp);
-                } else {
-//                    addWordToFavoriteFloatingActionButton.setImageResource(R.drawable.ic_add_24dp);
-                    ib_Favorite.setImageResource(R.drawable.ic_star_border_24dp);
-                }
-            }
-        });
-        addWordToFavoriteFloatingActionButton.setOnClickListener(new View.OnClickListener() {
 
-            @Override
-            public void onClick(View view) {
-
-                listSearchViewModel.addWordToFavorite(word, definition);
-            }
-        });
 
 
     }
@@ -221,7 +200,7 @@ Intent intent = getActivity().getIntent();
             definition = data.getString(data.getColumnIndex(DBSanderDict.KEY_DETAILS));
             if (!word.isEmpty() && !definition.isEmpty())
                 try {
-                    listSearchViewModel.searchIsDone(word, definition);            //            Snackbar.make(rootView, word + " /n" + definition, Snackbar.LENGTH_LONG).show();
+                    favoriteListViewModel.searchIsDone(word, definition);            //            Snackbar.make(rootView, word + " /n" + definition, Snackbar.LENGTH_LONG).show();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

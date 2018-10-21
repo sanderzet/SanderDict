@@ -4,12 +4,12 @@
     <string name="action_search">Пошук</string>
     <string name="action_settings">Налаштування</string>
     <string name="add_dictionary_from_dir">Додати словник з пристрою</string>
-    <string name="add_dictionary_from_net">Доодати словник з мережі</string>
+    <string name="add_dictionary_from_net">Додати словник з мережі</string>
     <string name="hint">Пошук в словнику</string>
     <string name="sanderdict">SanderDict</string>
     <string name="text_in_widget">Словник не встановлено</string>
     <string name="appwidget_text">SanderDict віджет</string>
-    <string name="add_widget">Ok</string>
+    <string name="add_widget">OK</string>
     <string name="configure">Налаштування</string>
     <string name="autoupdate">Автооновлення</string>
     <string name="update_period">Період оновлення</string>
@@ -19,5 +19,10 @@
     <string name="drawer_item_about">Інформація</string>
     <string name="navigation_drawer_open">Відкрити меню</string>
     <string name="navigation_drawer_close">Закрити меню</string>
-    <string name="favorite">Favorite</string>
+    <string name="noWordPassedToApp">Жодного слова не передано для перекладу.</string>
+    <string name="word">"Слово "</string>
+    <string name="didNotFound"> не знайдено.</string>
+    <string name="favorite">Вибрані</string>
+    <string name="Add_dictionary_from_net">Додати словник з мережі</string>
+    <string name="TypeThere">Введіть тут</string>
 </resources>

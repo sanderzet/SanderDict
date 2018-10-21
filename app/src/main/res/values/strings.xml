@@ -7,7 +7,7 @@
     <string name="add_dictionary_from_net">Add dictionary from net</string>
     <string name="appwidget_text">SanderDict widget</string>
     <string name="configure">Configure</string>
-    <string name="add_widget">Ok</string>
+    <string name="add_widget">OK</string>
     <string name="sanderdict">SanderDict</string>
     <string name="text_in_widget">No dictionary installed</string>
     <string name="autoupdate">Autoupdate</string>
@@ -19,4 +19,9 @@
     <string name="navigation_drawer_open">Open drawer</string>
     <string name="navigation_drawer_close">Close drawer</string>
     <string name="favorite">Favorite</string>
+    <string name="noWordPassedToApp">No word passed to app</string>
+    <string name="word">Word </string>
+    <string name="didNotFound"> didn\'t found. </string>
+    <string name="Add_dictionary_from_net">Add dictionary from net</string>
+    <string name="TypeThere">Type there</string>
 </resources>

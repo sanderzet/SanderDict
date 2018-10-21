@@ -18,7 +18,7 @@ import ua.pp.sanderzet.sanderdict.data.repository.FavoriteRepository;
  * Created by sander on 08/10/17.
  */
 
-public class ListSearchViewModel extends AndroidViewModel {
+public class FavoriteListViewModel extends AndroidViewModel {
 
 private final FavoriteRepository favoriteRepository;
 private final DictionaryRepository dictionaryRepository;
@@ -30,11 +30,11 @@ private final String dbName = "eng_ukr_uni.db";
     private final MutableLiveData<String> searchedWord = new MutableLiveData<>();
     private final LiveData<List<DictionaryModel>> suggestedWords;
 
-    public ListSearchViewModel(Application application) {
+    public FavoriteListViewModel(Application application) {
         super(application);
         favoriteRepository = FavoriteRepository.getInstance(application);
         dictionaryRepository = DictionaryRepository.getInstance(application, dbName);
-        suggestedWords = Transformations.switchMap(searchedWord, dictionaryRepository::getSuggestedWord);
+        suggestedWords = Transformations.switchMap(searchedWord, dictionaryRepository::getSuggestedWords);
         wordIsFavorite = (MutableLiveData)Transformations.switchMap(newWord, input -> favoriteRepository.isWordFavorite(input)
         );
 
@@ -44,8 +44,11 @@ private final String dbName = "eng_ukr_uni.db";
     public final LiveData getWordIsFavorite() {
         return wordIsFavorite;
     }
+    public final LiveData<List<FavoriteModel>> getAllWords () {
+        return favoriteRepository.getAllWords();
+    }
 
-    //  When we type symbol in SerchView
+    //  When we type symbol in SearchView
     public void setSearchedWord(String pattern) {
         searchedWord.setValue(pattern);
     }
@@ -60,15 +63,31 @@ private final String dbName = "eng_ukr_uni.db";
         favoriteRepository.addWord(createFavoriteModel(word, definition));
 
         //        Word has added, so fab in UI must be invisible
+        wordIsFavorite.setValue(true);
+    }
+
+    public void removeWordFromFavorite(FavoriteModel favoriteModel) {
+
+        favoriteRepository.removeWord(favoriteModel);
         wordIsFavorite.setValue(false);
     }
 
+    public void removeWordFromFavorite(String word) {
+
+        FavoriteModel favoriteModel = favoriteRepository.getFavoriteModel(word);
+        favoriteRepository.removeWord(favoriteModel);
+        wordIsFavorite.setValue(false);
+    }
+
+
     private FavoriteModel createFavoriteModel (String word, String definition) {
-        FavoriteModel favoriteModel = new FavoriteModel();
+        FavoriteModel favoriteModel = new FavoriteModel(0,word,definition, Calendar
+        .getInstance().getTime(),0);
+       /* favoriteModel.setId(0);
         favoriteModel.setWord(word);
         favoriteModel.setDefinition(definition);
         favoriteModel.setStars(0);
-        favoriteModel.setDateOfStoring(Calendar.getInstance().getTime());
+        favoriteModel.setDateOfStoring(Calendar.getInstance().getTime());*/
         return favoriteModel;
     }
 }

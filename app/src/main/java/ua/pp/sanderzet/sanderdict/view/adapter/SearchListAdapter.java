@@ -24,7 +24,7 @@ import ua.pp.sanderzet.sanderdict.viewmodel.MainActivityViewModel;
 public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.ViewHolder> {
 
 private List<DictionaryModel> dictionaryModels;
-private MainActivityViewModel mainActivityViewModel;
+private static MainActivityViewModel mainActivityViewModel;
 
     public SearchListAdapter(List<DictionaryModel> dictionaryModels, MainActivityViewModel mainActivityViewModel) {
 this.dictionaryModels = dictionaryModels;
@@ -33,10 +33,17 @@ this.mainActivityViewModel = mainActivityViewModel;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
     public TextView wordTextView;
+public DictionaryModel dictionaryModel;
 
         public ViewHolder(View itemView) {
             super(itemView);
 wordTextView = itemView.findViewById(R.id.dictionaryItemWord);
+wordTextView.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        mainActivityViewModel.setUnfoldedWord(dictionaryModel);
+    }
+});
         }
     }
 
@@ -51,6 +58,7 @@ View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_ite
 
     @Override
     public void onBindViewHolder(SearchListAdapter.ViewHolder holder, int position) {
+        holder.dictionaryModel = dictionaryModels.get(position);
 holder.wordTextView.setText(dictionaryModels.get(position).getWord());
 
 /*
@@ -59,12 +67,12 @@ Yes, we are setting listener each time when items is shown, but if we do it in h
 Eventually, listener is light object, so it don't use many resources.
 */
 
-holder.wordTextView.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
-        mainActivityViewModel.setUnfoldedWord(dictionaryModels.get(position));
-    }
-});
+//holder.wordTextView.setOnClickListener(new View.OnClickListener() {
+//    @Override
+//    public void onClick(View v) {
+//        mainActivityViewModel.setUnfoldedWord(holder.dictionaryModel);
+//    }
+//});
 
     }
 
