@@ -1,11 +1,13 @@
 package ua.pp.sanderzet.sanderdict.view.ui;
 
 
+import android.Manifest;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
@@ -14,9 +16,10 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -31,12 +34,13 @@ import android.view.inputmethod.EditorInfo;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.concurrent.Callable;
+import java.util.List;
 
+import androidx.work.WorkInfo;
 import ua.pp.sanderzet.sanderdict.SanderDictConstants;
+import ua.pp.sanderzet.sanderdict.data.model.DictionariesModel;
 import ua.pp.sanderzet.sanderdict.data.model.DictionaryModel;
 import ua.pp.sanderzet.sanderdict.data.model.FavoriteModel;
-import ua.pp.sanderzet.sanderdict.viewmodel.FragmentDictionariesViewModel;
 import ua.pp.sanderzet.sanderdict.viewmodel.MainActivityViewModel;
 import ua.pp.sanderzet.sanderdict.R;
 
@@ -66,6 +70,7 @@ private FragmentFavoriteWordUnfolded fragmentFavoriteWordUnfolded;
 private FragmentDictionaries fragmentDictionaries;
 
     private SearchView searchView;
+    private MenuItem searchViewMenuItem;
     private String myQuery ;
     SharedPreferences sp;
     MainActivityViewModel viewModel;
@@ -118,6 +123,10 @@ private LiveData<Boolean> searchViewHasFocus;
         fragmentFavoriteWordUnfolded = new FragmentFavoriteWordUnfolded();
         fragmentDictionaries = new FragmentDictionaries();
 
+
+
+
+
         if (savedInstanceState == null) {
 
            /* fragmentTransaction = fragmentManager.beginTransaction();
@@ -127,6 +136,7 @@ private LiveData<Boolean> searchViewHasFocus;
             // sp = PreferenceManager.getDefaultSharedPreferences(this);
             // sp.edit().putString("dict_now", "").apply();
         myQuery = "";
+
         }
         else myQuery = savedInstanceState.getString(KEY_SEARCH);
 
@@ -143,19 +153,40 @@ private LiveData<Boolean> searchViewHasFocus;
             @Override
             public void onChanged(@Nullable DictionaryModel dictionaryModel) {
                 viewModel.setQuery(dictionaryModel.getWord());
-   if (searchView != null)
-       searchView.setQuery(dictionaryModel.getWord(),true );
+   if (searchView != null) {
+       searchView.setQuery(dictionaryModel.getWord(), true);
 
 
-
-                //                Remove focus from searchView (if we are sent to it from other app,
+       //                Remove focus from searchView (if we are sent to it from other app,
 //                then we can tap Back only one for returning to sending app, but if
 //                we have focus on searchView, we can tap Back twice.
-constraintLayout.requestFocus();
+//constraintLayout.requestFocus();
+       searchView.clearFocus();
+   }
                     fragmentManager.beginTransaction().replace(R.id.frameLayout, fragmentWordUnfolded, FTAG_WORD_UNFOLDED).
                 commit();
 
 // Snackbar.make(constraintLayout, "New FragmentSearch", Snackbar.LENGTH_SHORT).show();
+            }
+        });
+
+
+        /*For Worker during import file to db dictionary*/
+
+        viewModel.getWorkerToDbInfo().observe(this, new Observer<List<WorkInfo>>() {
+            @Override
+            public void onChanged(@Nullable List<WorkInfo> workInfos) {
+                if (workInfos == null || workInfos.isEmpty()) {
+                    return;
+
+                }
+                WorkInfo workInfo = workInfos.get(0);
+                boolean finished = workInfo.getState().isFinished();
+                if (!finished) {
+
+                } else {
+                    Snackbar.make(constraintLayout, "DB imported successfully !", Snackbar.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -177,7 +208,7 @@ constraintLayout.requestFocus();
             @Override
             public void onChanged(@Nullable FavoriteModel favoriteModel) {
                     fragmentManager.beginTransaction().replace(R.id.frameLayout, fragmentFavoriteWordUnfolded, FTAG_FAVORITE_UNFOLDED).
-                   commit();
+                   addToBackStack(null).commit();
                             }
         });
 
@@ -187,6 +218,7 @@ viewModel.getMessageForUser().observe(this, new Observer<String>() {
         Snackbar.make(constraintLayout, s, Snackbar.LENGTH_SHORT).show();
     }
 });
+
 
 
         //Searching from other app
@@ -208,8 +240,9 @@ viewModel.getMessageForUser().observe(this, new Observer<String>() {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+searchViewMenuItem = menu.findItem(R.id.action_search);
+        searchView = (SearchView) searchViewMenuItem.getActionView();
 
-        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
 searchView.setSaveEnabled(true);
 searchView.setQueryHint(getString(R.string.hint));
 searchView.setBackgroundColor(Color.WHITE);
@@ -221,7 +254,6 @@ searchView.setBackgroundColor(Color.WHITE);
         int options = searchView.getImeOptions();
         searchView.setImeOptions(options| EditorInfo.IME_FLAG_NO_EXTRACT_UI);
 searchView.setQuery(myQuery,false);
-
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -250,7 +282,7 @@ searchView.setQuery(myQuery,false);
                     if (!fragmentListSearch.isAdded()) {
                         fragmentManager.beginTransaction().
                                 replace(R.id.frameLayout, fragmentListSearch, FTAG_LIST_SEARCH).
-                                addToBackStack(null).commit();
+                        commit();
                     }
 
                     viewModel.setQuery(query);
@@ -265,12 +297,12 @@ searchView.setQuery(myQuery,false);
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
                     if (hasFocus) {
-                        if (!fragmentListSearch.isAdded() ) {
+                        if (!fragmentListSearch.isAdded()) {
 
                         }
                         Snackbar.make(constraintLayout, "FragmentListSearch Is added = " + fragmentListSearch.isAdded(), LENGTH_LONG).show();
                     }
-                }
+                                    }
             };
 
     @Override
@@ -296,14 +328,21 @@ outState.putString(KEY_SEARCH, searchView.getQuery().toString());    }
         viewModel.setIsActiveFabFavoriteAdd(false);
         switch (id) {
             case R.id.my_add_dict_from_dir:
-                addDictFromDir();
-                break;
+
+
+                viewModel.addDictFromDir();
+
+
+
+                return true;
             case R.id.my_add_dict_from_net:
                 Snackbar.make(constraintLayout, R.string.Add_dictionary_from_net, Snackbar.LENGTH_LONG).show();
 //            Toast.makeText(this, R.string.add_dictionary_from_net, Toast.LENGTH_LONG).show();
-                break;
+
+
+                return true;
             case R.id.action_settings:
-                break;
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -315,54 +354,34 @@ outState.putString(KEY_SEARCH, searchView.getQuery().toString());    }
     }
 
 
-    private void addDictFromDir() {
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
 
-            File file = new File(Environment.getExternalStorageDirectory() + File.separator + "SanderDict");
-            FilenameFilter filenameFilter = new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String name) {
-                    if (name.endsWith(".dsl.dz")) return true;
-                    else return false;
-                }
-            };
-
-            String[] files = file.list(filenameFilter);
-//    If exist dir /SanderDict on external storage & in this dir exist one or more file .dsl.dz
-            if (files != null && files.length != 0) {
-                for (int i = 0; i < files.length; i++) {
-                    String s = files[i];
-                }
-            } else
-                Snackbar.make(constraintLayout, "No appropriate directory or files have been found", Snackbar.LENGTH_LONG).show();
-
-        } else
-            Snackbar.make(constraintLayout, "No external storage have been found", LENGTH_INDEFINITE).show();
-    }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 int id = item.getItemId();
         switch (id) {
             case R.id.drawer_item_favorite:
-     toolbar.setTitle("Favorite");
 
            showFavorite();
-                break;
+               break;
             case R.id.drawer_item_dictionaries:
-           toolbar.setTitle("Dictionaries");
-showDictionaries();
+
+                showDictionaries();
+
 break;
         }
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+        toolbar.setTitle(item.getTitle());
+        searchView.clearFocus();
+        searchViewMenuItem.collapseActionView();
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
-mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
 
     public void showFavorite () {
            fragmentManager.beginTransaction().replace(R.id.frameLayout, fragmentFavoriteList, FTAG_FAVORITE_LIST).
-                    addToBackStack(null).commit();
+                    commit();
 
     }
 

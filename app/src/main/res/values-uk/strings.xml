@@ -25,4 +25,13 @@
     <string name="favorite">Вибрані</string>
     <string name="Add_dictionary_from_net">Додати словник з мережі</string>
     <string name="TypeThere">Введіть тут</string>
+    <string name="EN">Англійська</string>
+    <string name="UA">Українська</string>
+    <string name="RU">Російська</string>
+    <string name="PL">Польська</string>
+    <string name="df_dictionary_download">Завантажити цей словник ?</string>
+    <string name="df_dictionary_remove">Вилучити цей словник ?</string>
+    <string name="df_dictionary_activate">Активувати словник ?</string>
+    <string name="Ok">Так</string>
+    <string name="Cancel">Відмінити</string>
 </resources>

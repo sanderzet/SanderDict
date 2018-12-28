@@ -12,6 +12,8 @@ import android.provider.BaseColumns;
 import android.util.Log;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -29,14 +31,14 @@ import java.util.zip.GZIPInputStream;
  * for github
  */
 public class DBSanderDict {
-    private static final String db_table = "databases";
+    private  String db_table = "dict";
     private static final int DB_VERSION = 1;
     //Column Names for table
     private static final String KEY_ID = BaseColumns._ID;
     private static final String KEY_DATE = "word";
     public static final String KEY_DETAILS = "definition";
 
-    private static final String DB_CREATE =
+    private  String DB_CREATE =
             "create table " + db_table + "(" +
                     KEY_ID + " integer primary key, " +
                     KEY_DATE + " text, " +
@@ -70,6 +72,7 @@ public class DBSanderDict {
 
 
 //    Copy default db from assets/dict
+//    Now not actual
  boolean copyDefDictFromAssets(String inputFile, String outputFile) {
 
     try {
@@ -134,9 +137,11 @@ public Cursor query(String[] projection, String selection){
     return cursor;
 }
 
-    void transToDB( String archivedDictPath, String archivedDictName) {
+ public    void transToDB(File archivedDict, String dbPathName) {
         // int progress = 0;
-        mDB.execSQL(DB_CREATE);
+//        mDB.execSQL(DB_CREATE);
+
+     mDB = open(dbPathName);
         GZIPInputStream gz;
         Reader decoder;
         BufferedReader br;
@@ -155,8 +160,9 @@ public Cursor query(String[] projection, String selection){
         Matcher m;
         boolean nextWord = false ;
         try {
-            AssetManager am = mCtx.getAssets();
-            gz = new GZIPInputStream(am.open("databases/univer_en_uk.dsl.dz"));
+//            AssetManager am = mCtx.getAssets();
+//            gz = new GZIPInputStream(am.open("databases/univer_en_uk.dsl.dz"));
+            gz = new GZIPInputStream(new FileInputStream(archivedDict));
             decoder = new InputStreamReader(gz, "UTF-16LE");
             br = new BufferedReader(decoder);
 
@@ -205,7 +211,7 @@ public Cursor query(String[] projection, String selection){
             gz.close();
             decoder.close();
             br.close();
-
+close();
         } catch (IOException e) {
             e.printStackTrace();
         }

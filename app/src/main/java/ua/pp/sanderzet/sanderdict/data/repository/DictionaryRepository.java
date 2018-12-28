@@ -32,7 +32,7 @@ public class DictionaryRepository {
     private DictionaryDAO dictionaryDAO;
     private String databaseName;
 
-    //    Make FavoriteRepository as Singleton
+    //    Make DictionaryRepository as Singleton
 
     public DictionaryRepository(Application application, String databaseName) {
         this.mApplication = application;

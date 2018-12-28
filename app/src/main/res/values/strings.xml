@@ -24,4 +24,16 @@
     <string name="didNotFound"> didn\'t found. </string>
     <string name="Add_dictionary_from_net">Add dictionary from net</string>
     <string name="TypeThere">Type there</string>
+    <string name="checked">Checked</string>
+    <string name="english_ukraine">English-Ukraine</string>
+    <string name="downloaded">Downloaded</string>
+    <string name="EN">English</string>
+    <string name="UA">Ukraine</string>
+    <string name="RU">Russian</string>
+    <string name="PL">Poland</string>
+    <string name="df_dictionary_download">Do you want to download the dictionary ?</string>
+    <string name="df_dictionary_remove">Do you want to remove the dictionary ?</string>
+    <string name="df_dictionary_activate">Do you want to activate the dictionary ?</string>
+    <string name="Ok">Ok</string>
+    <string name="Cancel">Cancel</string>
 </resources>
